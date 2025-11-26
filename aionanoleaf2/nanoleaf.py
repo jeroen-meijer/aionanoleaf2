@@ -2,6 +2,7 @@
 # Modified and optimized 2025 by loebi-ch
 # Added support for Nanoleaf Essentials based on the work of JaspervRijbroek in 2025
 # Added support for 4D/Screen Mirroring emersion modes (1D, 2D, 3D, 4D) based on the work of jonathanrobichaud4 in 2024
+# Added support for IPv6 hosts based on the work of krozgrov in 2025
 #
 # This file is part of aionanoleaf2, the refactored version of aionanoleaf by Milan Meulemans
 #
@@ -23,6 +24,7 @@ from __future__ import annotations
 import asyncio
 import json
 import socket
+import ipaddress
 
 from .layout import Panel
 from typing import Any, Callable
@@ -82,7 +84,7 @@ class Nanoleaf:
         retries: int = 3,
     ) -> None:
         self._session = session
-        self._host = host
+        self._host = self._format_host(host)
         self._auth_token = auth_token
         self._port = port
         self._retries = retries
@@ -554,6 +556,31 @@ class Nanoleaf:
             raise Unavailable from last_error
             
         raise Unavailable("Unknown error occurred!")
+
+
+
+# Bracket IPv6 literals and percent-encode zone IDs per RFC 6874.
+    def _format_host(host: str) -> str:
+        if not host:
+            return host
+            
+        #Remove brackets
+        raw = host.strip().strip("[]")
+        
+        #Split IP and zones
+        parts = raw.split("%", 1)
+        ip_part = parts[0]
+        
+        try:
+            # Check for valid IPv6
+            ipaddress.IPv6Address(ip_part)
+            
+            # Format IPv6
+            if len(parts) > 1:
+                return f"[{ip_part}%25{parts[1]}]"
+            return f"[{ip_part}]"
+        except ValueError:
+            return host  # No valid IPv6 (we just return the original value)
 
 
 

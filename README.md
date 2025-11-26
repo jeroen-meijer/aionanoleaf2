@@ -6,6 +6,7 @@ This async Python wrapper for the Nanoleaf API replaces the no longer maintained
 The original aioNanoleaf has been modified to:
 - add support for Nanoleaf Essentials devices.
 - add support for Screen Mirroring emersion modes (1D, 2D, 3D, 4D).
+- add support for IPv6 hosts.
 
 ## Installation
 ```bash

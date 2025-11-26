@@ -2,6 +2,7 @@
 # Modified and optimized 2025 by loebi-ch
 # Added support for Nanoleaf Essentials based on the work of JaspervRijbroek in 2025
 # Added support for 4D/Screen Mirroring emersion modes (1D, 2D, 3D, 4D) based on the work of jonathanrobichaud4 in 2024
+# Added support for IPv6 hosts based on the work of krozgrov in 2025
 #
 # This file is part of aionanoleaf2, the refactored version of aionanoleaf by Milan Meulemans
 #
