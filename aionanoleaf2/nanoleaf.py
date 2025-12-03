@@ -560,7 +560,7 @@ class Nanoleaf:
 
 
 # Bracket IPv6 literals and percent-encode zone IDs per RFC 6874.
-    def _format_host(host: str) -> str:
+    def _format_host(self, host: str) -> str:
         if not host:
             return host
             
