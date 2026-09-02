@@ -291,9 +291,7 @@ class Nanoleaf:
         self._hardware_version = data.get("hardwareVersion")
         self._model = data["model"]
         
-        # Nanoleaf Essentials sometimes omit "state" from the root payload.
-        # Fall back to GET /state (same pattern as effectsList below).
-        # Based on lukebaldan/aionanoleaf2@fix/essentials-missing-state.
+        # Nanoleaf Essentials are missing the state object in the main payload, so we have to fetch it separately.
         state = data.get("state")
         if state is None:
             try:
@@ -302,7 +300,6 @@ class Nanoleaf:
             except Unavailable:
                 state = {}
 
-        # Populate state. Guard sub-fields: some models omit unused color modes.
         self._is_on = state.get("on", {}).get("value", False)
         brightness = state.get("brightness", {})
         self._brightness = brightness.get("value", self._brightness)
@@ -352,8 +349,6 @@ class Nanoleaf:
         try:
             resp = await self._request("get", "effects/effectsList")
             data = await resp.json()
-            # Some devices (e.g. NL77K1 ceiling) return {"effectsList": [...]}
-            # instead of a bare JSON array.
             if isinstance(data, dict):
                 return data.get("effectsList") or []
             return data or []
@@ -367,7 +362,6 @@ class Nanoleaf:
         try:
             resp = await self._request("get", "effects/select")
             data = await resp.json()
-            # Some devices return {"select": "..."} instead of a bare string.
             if isinstance(data, dict):
                 return data.get("select") or None
             return data
